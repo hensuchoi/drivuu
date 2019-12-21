@@ -18,40 +18,45 @@ public class FirebaseDatabaseHelper {
     private DatabaseReference mReferencePlates;
     private List<Plate> plates = new ArrayList<>();
 
-    public FirebaseDatabaseHelper(){
+    public FirebaseDatabaseHelper() {
         mDatabase = FirebaseDatabase.getInstance();
         mReferencePlates = mDatabase.getReference("Plates");
 
 
     }
-    public interface DataStatus{
+
+    public interface DataStatus {
         void DataIsLoaded(List<Plate> plates, List<String> keys);
+
         void DataIsInserted();
+
         void DataIsUpdated();
+
         void DataIsDeleted();
 
     }
-    public void readPlates(final DataStatus dataStatus){
-        mReferencePlates.addValueEventListener((new ValueEventListener() {
+
+    public void readPlates(final DataStatus dataStatus) {
+        mReferencePlates.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 plates.clear();
                 List<String> keys = new ArrayList<>();
-                for(DataSnapshot keyNode: dataSnapshot.getChildren()){
+                for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
                     keys.add(keyNode.getKey());
                     Plate plate = keyNode.getValue(Plate.class);
                     plates.add(plate);
 
                 }
-                dataStatus.DataIsLoaded(plates,keys);
+                dataStatus.DataIsLoaded(plates, keys);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        }))
 
+
+        });
     }
-
 }
